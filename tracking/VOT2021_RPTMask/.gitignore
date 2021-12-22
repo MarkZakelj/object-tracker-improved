@@ -1,0 +1,11 @@
+.idea/*
+*.model
+*.pth
+*.pth.tar
+
+build
+__pycache__
+*.so
+
+README.md
+install.sh
