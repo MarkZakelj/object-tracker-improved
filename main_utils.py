@@ -3,8 +3,10 @@ import cv2
 import os
 from vot.region import io as vot_io
 import numpy as np
+WORKSPACE = 'TransT_M/votspace'
+SEQUENCE_DIR = os.path.join(WORKSPACE, 'sequences')
+RESULT_DIR = os.path.join(WORKSPACE, 'results', 'TransT_M', 'unsupervised')
 
-SEQUENCE_DIR = 'tracking/sequences'
 
 
 def get_all_sequences():
@@ -64,15 +66,23 @@ def has_interpolated_groundtruth(target_seq, interpolation_method):
 
 
 
-def load_masks_raster(target_seq, interpolated=False, interpolation_method='RIFE'):
+def load_masks_raster(target_seq, interpolated=False, interpolation_method='RIFE', load_results=False):
     ground_truth = os.path.join(SEQUENCE_DIR, target_seq, 'groundtruth.txt')
-    masks = vot_io.read_file(ground_truth)
+    masks = vot_io.read_trajectory(ground_truth)
     size = get_video_size(target_seq)
+    if load_results:
+        results = os.path.join(RESULT_DIR, target_seq, f"{target_seq}_001.txt")
+        fp = open(results, 'r')
+        fp.readline()
+        res_masks = vot_io.read_trajectory(fp)
+        masks = [masks[0]] + res_masks
+
+
     rasters = (msk.rasterize(bounds=(0, 0, size[1] - 1, size[0] - 1)) for msk in masks)
     rasters_int = None
     if interpolated:
         ground_truth_int = os.path.join(SEQUENCE_DIR, target_seq, f'groundtruth_{interpolation_method}.txt')
-        masks_int = vot_io.read_file(ground_truth_int)
+        masks_int = vot_io.read_trajectory(ground_truth_int)
         rasters_int = (msk.rasterize(bounds=(0, 0, size[1] - 1, size[0] - 1)) for msk in masks_int)
     for rst in rasters:
         yield rst
@@ -103,7 +113,7 @@ def load_video(target_seq, interpolated=False, interpolation_method='ABME'):
 
 def apply_mask_to_image(image, mask, color):
     masked_int_img = np.where(mask[..., None], color, image)
-    out_int = cv2.addWeighted(image, 0.6, masked_int_img, 0.4, 0)
+    out_int = cv2.addWeighted(image, 0.2, masked_int_img, 0.8, 0)
     return out_int
 
 

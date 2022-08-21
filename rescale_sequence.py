@@ -13,9 +13,9 @@ def main():
         h, w = utils.get_video_size(seq)
         if h >= 1080 and w >= 1920:
             fps = utils.get_video_fps(seq)
-            images = sorted(Path('sequences', seq, 'color').iterdir())
+            images = sorted(Path('TransT_M/votspace/sequences', seq, 'color').iterdir())
             new_w, new_h = round(w * scale_factor), round(h * scale_factor)
-            ground_truth = os.path.join('sequences', seq, 'groundtruth.txt')
+            ground_truth = os.path.join('TransT_M/votspace/sequences', seq, 'groundtruth.txt')
             masks = reg_io.read_file(ground_truth)
             resized_masks = [msk.resize(scale_factor) for msk in masks]
             print('shape', h, w)
