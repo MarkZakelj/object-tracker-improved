@@ -133,3 +133,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+/TransT_M/
+/interpolation/ECCV2022-RIFE/
