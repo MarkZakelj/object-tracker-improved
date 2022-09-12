@@ -106,7 +106,7 @@ def interpolate_all(interpolation_method, sequences=None, force=False):
 
 def main():
     # generate_interpolation_groundtruth('tiger', 'RIFE')
-    interpolate_all(['RIFE'])
+    interpolate_all(['RIFE', 'ABME'])
 
 
 if __name__ == '__main__':
